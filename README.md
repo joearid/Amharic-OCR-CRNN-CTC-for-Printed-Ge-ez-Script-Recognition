@@ -149,6 +149,8 @@ We test on a real-world document — a page from an Amharic Bible (622×670 px, 
 
 ---
 ## To Train:
+
+first download the dataset from : https://bdu-birhanu.github.io/amharic.html
 python amharic_ocr/train.py --epochs 50 --batch_size 16
 ## The trained model will be saved to output/YYYYMMDD_HHMMSS/best_model.pth.
 Expected results after training:
