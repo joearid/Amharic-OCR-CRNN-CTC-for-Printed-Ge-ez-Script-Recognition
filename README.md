@@ -148,7 +148,98 @@ We test on a real-world document — a page from an Amharic Bible (622×670 px, 
 </p>
 
 ---
+## To Train:
+python amharic_ocr/train.py --epochs 50 --batch_size 16
+## The trained model will be saved to output/YYYYMMDD_HHMMSS/best_model.pth.
+Expected results after training:
+- Character Error Rate (CER): ~0.64%
+- Line-level accuracy: ~96%
 
+Evaluate on Test Set
+
+After training, evaluate the model on the held-out test split:
+bash
+
+python scripts/evaluate.py \
+  --model_path output/YYYYMMDD_HHMMSS/best_model.pth \
+  --data_dir ~/Desktop/vscode/C++_NLP/amharicCV/train_big/train
+
+Output:
+text
+
+Test samples: 8,185
+Perfect predictions: ~96.3%
+Average CER: ~0.0076
+Overall CER: ~0.0064
+
+Run Inference on Any Image
+
+Use the trained model to extract Amharic text from a document image:
+bash
+
+python scripts/infer.py \
+  --image path/to/your_document.jpg \
+  --model output/YYYYMMDD_HHMMSS/best_model.pth \
+  --meta data/metadata.json \
+  --output result.txt
+
+Options:
+Flag	Description
+--no_segment	Skip line detection (use for single-line images)
+--no_enhance	Disable CLAHE contrast enhancement
+--output	Save extracted text to file
+
+Example output:
+text
+
+Lines: 20
+============================================================
+Line   1: በሙላት ያልተገለጠው መንግሥት
+Line   2: በሦስተኛ ደረጃ፣ የእግዚአብሔር መንግሥት...
+...
+
+Analyze an Image Before OCR
+
+Inspect image quality, detect skew, find text lines:
+bash
+
+python scripts/inspect_image.py path/to/image.jpg --output_dir ./inspection
+
+Generates a report with:
+
+    Pixel statistics and histogram
+
+    OCR readiness score (0-100)
+
+    Line detection visualization
+
+    Skew angle measurement
+
+    Model compatibility check
+
+Generate Character Mapping
+
+If you need to regenerate metadata.json from the dataset:
+bash
+
+python scripts/extract_mapping.py
+
+📁 Data Setup
+
+The training script expects the dataset at:
+text
+
+~/Desktop/vscode/C++_NLP/amharicCV/train_big/train/
+├── X_trainp_pg_vg.npy
+└── y_trainp_pg_vg.npy
+
+Update config.py if your data is stored elsewhere:
+python
+
+@dataclass
+class OCRConfig:
+    data_dir: str = "path/to/your/data"
+    
 ## 🚀 Quick Start
 
 ### Installation
